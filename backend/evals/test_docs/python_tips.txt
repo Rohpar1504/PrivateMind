@@ -1,0 +1,18 @@
+Python Best Practices and Patterns
+
+Python is a high-level, dynamically typed language known for its readability and expressive syntax. Writing idiomatic Python — often called "Pythonic" code — leads to programs that are easier to read, maintain, and debug.
+
+List Comprehensions
+List comprehensions provide a concise way to create lists by applying an expression to each item in an iterable, optionally filtering items. They are generally faster than equivalent for loops because they are optimized at the C level in CPython. For example, [x * 2 for x in range(10) if x % 2 == 0] produces a list of doubled even numbers. Dictionary and set comprehensions follow the same syntax. However, comprehensions should be avoided when the logic is complex enough to reduce readability.
+
+Generators
+Generators are functions that yield values one at a time instead of returning a complete list. They are memory-efficient for large datasets because they produce values lazily — only when requested. A generator function uses the yield keyword instead of return. Generator expressions (similar to list comprehensions but with parentheses) create anonymous generators. When iterating over millions of records or processing streaming data, generators prevent out-of-memory errors.
+
+Context Managers
+Context managers handle resource acquisition and release automatically, ensuring cleanup even if an exception occurs. The with statement is the standard way to use them. File I/O is the canonical example: with open('file.txt') as f: guarantees the file is closed when the block exits. Custom context managers can be written as classes implementing __enter__ and __exit__, or as generator functions decorated with @contextlib.contextmanager. They are also commonly used for database connections, locks, and temporary directory management.
+
+Type Hints
+Type hints, introduced in Python 3.5 via PEP 484, allow developers to annotate variable and function types. They do not affect runtime behavior but enable static analysis tools like mypy and pyright to catch type errors before execution. They also improve IDE autocompletion and make APIs easier to understand. Modern Python (3.10+) allows union types using the | operator (e.g. str | None) instead of Optional[str] from the typing module.
+
+Virtual Environments and Dependency Management
+Virtual environments isolate project dependencies so different projects can use different package versions without conflict. The built-in venv module creates them. Tools like pip-tools, Poetry, and uv are used to manage and lock dependencies. Pinning dependency versions in a requirements.txt or pyproject.toml ensures reproducible builds across machines and over time.

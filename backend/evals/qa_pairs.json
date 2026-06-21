@@ -1,0 +1,101 @@
+[
+  {
+    "id": "m1-001",
+    "milestone": "M1",
+    "question": "What is overfitting in machine learning?",
+    "expected_doc": "ml_basics.txt",
+    "expected_answer_contains": [
+      "training data",
+      "generalize",
+      "test accuracy"
+    ]
+  },
+  {
+    "id": "m1-002",
+    "milestone": "M1",
+    "question": "How does gradient descent work?",
+    "expected_doc": "ml_basics.txt",
+    "expected_answer_contains": [
+      "loss function",
+      "learning rate",
+      "parameters"
+    ]
+  },
+  {
+    "id": "m1-003",
+    "milestone": "M1",
+    "question": "What is the Ebbinghaus forgetting curve?",
+    "expected_doc": "spaced_repetition.txt",
+    "expected_answer_contains": [
+      "memory",
+      "exponential",
+      "review"
+    ]
+  },
+  {
+    "id": "m1-004",
+    "milestone": "M1",
+    "question": "How does the SM-2 spaced repetition algorithm work?",
+    "expected_doc": "spaced_repetition.txt",
+    "expected_answer_contains": [
+      "easiness factor",
+      "interval",
+      "repetition"
+    ]
+  },
+  {
+    "id": "m1-005",
+    "milestone": "M1",
+    "question": "What are Python generators and when should I use them?",
+    "expected_doc": "python_tips.txt",
+    "expected_answer_contains": [
+      "yield",
+      "memory",
+      "lazy"
+    ]
+  },
+  {
+    "id": "m1-006",
+    "milestone": "M1",
+    "question": "What is a context manager in Python?",
+    "expected_doc": "python_tips.txt",
+    "expected_answer_contains": [
+      "with",
+      "resource",
+      "cleanup"
+    ]
+  },
+  {
+    "id": "m2-001",
+    "milestone": "M2",
+    "question": "What is the difference between overfitting and underfitting?",
+    "expected_doc": "ml_basics.txt",
+    "expected_answer_contains": [
+      "overfitting",
+      "underfitting",
+      "complexity"
+    ]
+  },
+  {
+    "id": "m2-002",
+    "milestone": "M2",
+    "question": "Why is spaced repetition more effective than cramming?",
+    "expected_doc": "spaced_repetition.txt",
+    "expected_answer_contains": [
+      "intervals",
+      "forgetting",
+      "efficient"
+    ]
+  },
+  {
+    "id": "m2-003",
+    "milestone": "M2",
+    "question": "How do type hints improve Python code?",
+    "expected_doc": "python_tips.txt",
+    "expected_answer_contains": [
+      "static analysis",
+      "mypy",
+      "autocompletion"
+    ]
+  }
+]

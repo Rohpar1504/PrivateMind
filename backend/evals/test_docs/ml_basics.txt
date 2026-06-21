@@ -1,0 +1,18 @@
+Machine Learning Fundamentals
+
+Machine learning is a branch of artificial intelligence that enables systems to learn patterns from data and improve their performance over time without being explicitly programmed for each task.
+
+Supervised Learning
+In supervised learning, a model is trained on labeled examples — input-output pairs where the correct answer is known. The model learns a mapping from inputs to outputs and can then predict outputs for new, unseen inputs. Common supervised learning tasks include classification (predicting a category) and regression (predicting a continuous value). Examples include spam detection, house price prediction, and image classification.
+
+Overfitting and Underfitting
+Overfitting occurs when a model learns the training data too well, including its noise and outliers, and fails to generalize to new data. An overfit model has high training accuracy but low test accuracy. Underfitting is the opposite — the model is too simple to capture the underlying pattern, resulting in poor performance on both training and test data. The ideal model balances complexity with generalization.
+
+Regularization
+Regularization techniques are used to prevent overfitting by penalizing model complexity. L1 regularization (Lasso) adds the absolute value of weights to the loss function and can drive some weights to zero, effectively selecting features. L2 regularization (Ridge) adds the squared value of weights, shrinking them toward zero without eliminating them. Dropout is a regularization technique used in neural networks where random neurons are deactivated during training.
+
+Gradient Descent
+Gradient descent is the optimization algorithm used to train most machine learning models. It iteratively adjusts model parameters in the direction that reduces the loss function. The learning rate controls how large each step is. Too large a learning rate causes the model to overshoot the minimum; too small causes slow convergence. Variants include stochastic gradient descent (SGD), which updates on one sample at a time, and mini-batch gradient descent, which updates on small batches.
+
+Train, Validation, and Test Sets
+A dataset is typically split into three parts. The training set is used to fit the model. The validation set is used to tune hyperparameters and select the best model. The test set is held out entirely and used only once at the end to report final performance. This split prevents data leakage and gives an honest estimate of how the model will perform in production.

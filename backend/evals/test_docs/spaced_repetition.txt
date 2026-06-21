@@ -1,0 +1,15 @@
+Spaced Repetition and the Ebbinghaus Forgetting Curve
+
+Hermann Ebbinghaus was a 19th-century German psychologist who pioneered the experimental study of memory. Through self-experimentation, he discovered that memory decays in a predictable, exponential pattern over time — a relationship now known as the forgetting curve.
+
+The Forgetting Curve
+The forgetting curve shows that without any review, people forget approximately 50% of new information within an hour, 70% within a day, and up to 90% within a week. The rate of forgetting is steepest immediately after learning and gradually flattens over time. However, each time information is reviewed, the curve resets and the rate of forgetting slows — meaning the interval before the next review can be longer.
+
+Spaced Repetition
+Spaced repetition is a learning technique that exploits the forgetting curve by scheduling reviews at increasing intervals. Instead of reviewing material at fixed daily intervals (massed practice), spaced repetition schedules each item individually based on how well it was remembered. Items recalled easily are shown less frequently; items recalled with difficulty are shown more frequently. This approach is significantly more efficient than cramming because it focuses study time on material that is actually at risk of being forgotten.
+
+The SM-2 Algorithm
+The SM-2 algorithm, developed by Piotr Wozniak for the SuperMemo software in 1987, is the most widely used spaced repetition algorithm. It tracks three values per item: the repetition number (how many times the item has been successfully reviewed), the easiness factor (a multiplier reflecting how easy the item is to remember, starting at 2.5), and the interval (the number of days until the next review). After each review, the user provides a quality rating from 0 to 5. If the rating is below 3, the repetition count resets. Otherwise, the interval grows: after the first review the interval is 1 day, after the second it is 6 days, and for subsequent reviews it is multiplied by the easiness factor. The easiness factor itself is adjusted based on the quality rating — higher ratings increase it, lower ratings decrease it, with a minimum of 1.3.
+
+Applications
+Spaced repetition is used extensively in language learning apps like Anki and Duolingo, medical education (for memorizing anatomy and pharmacology), and bar exam preparation. It is most effective for factual, discrete information that must be retained long-term. The key insight is that forgetting is not failure — it is a natural process that, when harnessed correctly through timely review, produces durable long-term memory.
