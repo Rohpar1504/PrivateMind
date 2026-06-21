@@ -15,18 +15,15 @@ An offline AI assistant that ingests your notes and PDFs, answers questions base
 
 ```bash
 # 1. Clone and enter the repo
-git clone <repo-url> && cd PrivateMind
+git clone https://github.com/Rohpar1504/PrivateMind.git && cd PrivateMind
 
-# 2. Copy env file
-cp .env.example .env
-
-# 3. Pull your preferred LLM (run on the host if using host Ollama)
-ollama pull llama3
-
-# 4. Start all services
+# 2. Start all services
 docker compose up --build
 
-# 5. Open the app
+# 3. Pull a language model (run once)
+docker compose exec ollama ollama pull llama3
+
+# 4. Open the app
 open http://localhost:5173
 # API docs: http://localhost:8000/docs
 ```
@@ -34,6 +31,15 @@ open http://localhost:5173
 ## GPU support (NVIDIA)
 
 To enable GPU passthrough for Ollama, install [nvidia-container-toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) and uncomment the `deploy` block in `docker-compose.yml` under the `ollama` service.
+
+## Features
+
+- **Ingest anything** — PDFs, plain text, Markdown, Word docs, and web pages
+- **Semantic search** — search by meaning across all your document chunks, with % match scores
+- **Document search** — find documents by title or tag, open originals in one click
+- **Conversational QA** — ask questions and get answers grounded in your documents (M2)
+- **Spaced repetition** — SM-2 scheduler resurfaces content you are about to forget (M3)
+- **Fully offline** — no data leaves your machine; all models run locally via Ollama and sentence-transformers
 
 ## Development
 
@@ -43,6 +49,9 @@ cd backend && ruff check .
 
 # Backend tests
 cd backend && pytest
+
+# LLM-as-a-Judge eval (requires docker compose up first)
+cd backend && python -m evals.runner --milestone M1
 
 # Frontend lint
 cd frontend && npm run lint
@@ -55,18 +64,23 @@ cd frontend && npm test
 
 ```
 PrivateMind/
-├── backend/          # FastAPI app (embeddings, RAG, scheduler)
+├── backend/                  # FastAPI app
 │   ├── app/
 │   │   ├── main.py
 │   │   ├── config.py
-│   │   ├── database.py
-│   │   ├── embeddings.py
+│   │   ├── database.py       # SQLAlchemy + schema migrations
+│   │   ├── embeddings.py     # sentence-transformers (HuggingFace, in-process)
+│   │   ├── chunker.py        # semantic chunking (150–1200 chars)
+│   │   ├── chroma.py         # ChromaDB vector store
+│   │   ├── parsers.py        # PDF, DOCX, TXT, MD, web page
+│   │   ├── ollama_client.py  # summaries + relationship extraction
 │   │   ├── models/
-│   │   └── routers/
+│   │   └── routers/          # ingest, documents, search, chat, review, settings
+│   ├── evals/                # LLM-as-a-Judge eval harness
 │   └── tests/
-├── frontend/         # React + Vite UI
+├── frontend/                 # React + Vite + TypeScript
 │   └── src/
-│       └── pages/    # Home, AddDocument, Search, Chat, Review, Settings
+│       └── pages/            # Home, AddDocument, Search, Chat, Review, Settings
 ├── docs/
 │   ├── SPEC.md
 │   └── DECISION_LOG.md
@@ -78,7 +92,7 @@ PrivateMind/
 | Milestone | Status | Description |
 |-----------|--------|-------------|
 | M0 — Scaffold | ✅ | Docker Compose, FastAPI skeleton, React skeleton, sentence-transformers loading |
-| M1 — Ingest + Search | 🔜 | File parsers, chunking, ChromaDB, standalone search |
-| M2 — Conversational QA | 🔜 | LangChain RAG chain, streaming chat |
-| M3 — Forgetting Curve | 🔜 | SM-2 scheduler, review UI |
-| M4 — Polish + Demo | 🔜 | Settings, relationship graph data, README, demo video |
+| M1 — Ingest + Search | ✅ | File parsers, semantic chunking, ChromaDB, dual-mode search, document library |
+| M2 — Conversational QA | 🔜 | LangChain RAG chain, streaming chat, source citations |
+| M3 — Forgetting Curve | 🔜 | SM-2 scheduler, review UI, home badge |
+| M4 — Polish + Demo | 🔜 | Settings, relationship graph data, demo video |
