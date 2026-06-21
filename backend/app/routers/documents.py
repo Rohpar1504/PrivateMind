@@ -1,6 +1,10 @@
+from datetime import UTC, datetime
+from pathlib import Path
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import FileResponse
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from app.chroma import delete_chunks
@@ -21,6 +25,8 @@ def _to_schema(doc: Document) -> DocumentMeta:
         tags=doc.tags,
         created_at=doc.created_at,
         updated_at=doc.updated_at,
+        last_accessed_at=doc.last_accessed_at,
+        file_path=doc.file_path,
     )
 
 
@@ -36,9 +42,41 @@ async def list_documents(db: Session = Depends(get_db)):
     return [_to_schema(d) for d in db.query(Document).order_by(Document.created_at.desc()).all()]
 
 
+@router.get("/search", response_model=list[DocumentMeta])
+async def search_documents(q: str = "", db: Session = Depends(get_db)):
+    """Keyword search across document titles and tags."""
+    if not q.strip():
+        return [_to_schema(d) for d in db.query(Document).order_by(Document.created_at.desc()).all()]
+    term = f"%{q.strip()}%"
+    docs = (
+        db.query(Document)
+        .filter(or_(Document.title.ilike(term), Document._tags.ilike(term)))
+        .order_by(Document.created_at.desc())
+        .all()
+    )
+    return [_to_schema(d) for d in docs]
+
+
 @router.get("/{document_id}", response_model=DocumentMeta)
 async def get_document(document_id: UUID, db: Session = Depends(get_db)):
-    return _to_schema(_get_or_404(db, str(document_id)))
+    doc = _get_or_404(db, str(document_id))
+    doc.last_accessed_at = datetime.now(UTC)
+    db.commit()
+    db.refresh(doc)
+    return _to_schema(doc)
+
+
+@router.get("/{document_id}/file")
+async def get_document_file(document_id: UUID, db: Session = Depends(get_db)):
+    """Serve the original uploaded file."""
+    doc = _get_or_404(db, str(document_id))
+    if not doc.file_path or not Path(doc.file_path).exists():
+        # For web pages, redirect to the source URL
+        if doc.source_path.startswith("http"):
+            from fastapi.responses import RedirectResponse
+            return RedirectResponse(url=doc.source_path)
+        raise HTTPException(status_code=404, detail="Original file not available")
+    return FileResponse(path=doc.file_path, filename=Path(doc.file_path).name)
 
 
 @router.patch("/{document_id}", response_model=DocumentMeta)

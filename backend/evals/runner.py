@@ -30,7 +30,7 @@ async def ingest_test_docs(api_url: str) -> dict[str, str]:
                 resp = await client.post(
                     f"{api_url}/ingest",
                     files={"file": (doc_path.name, f, "text/plain")},
-                    data={"title": doc_path.stem.replace("_", " ").title(), "granularity": "per_document"},
+                    data={"title": doc_path.stem.replace("_", " ").title()},
                 )
             if resp.status_code == 200:
                 doc_ids[doc_path.name] = resp.json()["document_id"]

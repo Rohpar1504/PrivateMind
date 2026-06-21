@@ -6,7 +6,6 @@ type Status = 'idle' | 'loading' | 'success' | 'error'
 
 export default function AddDocument() {
   const [mode, setMode] = useState<'file' | 'url'>('file')
-  const [granularity, setGranularity] = useState<'per_document' | 'per_chunk'>('per_document')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [url, setUrl] = useState('')
   const [title, setTitle] = useState('')
@@ -27,7 +26,6 @@ export default function AddDocument() {
       if (mode === 'url') fd.append('url', url)
       if (title) fd.append('title', title)
       if (tags) fd.append('tags', tags)
-      fd.append('granularity', granularity)
       const data = await ingestFile(fd)
       setResult(data)
       setStatus('success')
@@ -88,19 +86,6 @@ export default function AddDocument() {
           <div className="field">
             <label>Tags <span className="optional">(comma-separated)</span></label>
             <input type="text" placeholder="research, ml, notes" value={tags} onChange={e => setTags(e.target.value)} />
-          </div>
-          <div className="field">
-            <label>Review granularity</label>
-            <div className="radio-group">
-              <label className="radio-label">
-                <input type="radio" value="per_document" checked={granularity === 'per_document'} onChange={() => setGranularity('per_document')} />
-                Per document <span className="optional">(recommended for short notes)</span>
-              </label>
-              <label className="radio-label">
-                <input type="radio" value="per_chunk" checked={granularity === 'per_chunk'} onChange={() => setGranularity('per_chunk')} />
-                Per chunk <span className="optional">(better for long PDFs)</span>
-              </label>
-            </div>
           </div>
         </div>
 

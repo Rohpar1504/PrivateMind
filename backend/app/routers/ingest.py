@@ -1,4 +1,5 @@
 from datetime import date
+from pathlib import Path
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
@@ -6,10 +7,11 @@ from sqlalchemy.orm import Session
 
 from app.chroma import add_chunks
 from app.chunker import chunk_text
+from app.config import get_settings
 from app.database import get_db
 from app.embeddings import embed
 from app.models.db_models import Document, RelationshipEdge, SM2Record
-from app.models.schemas import IngestResponse, SM2Granularity
+from app.models.schemas import IngestResponse
 from app.ollama_client import extract_relationships, generate_summary
 from app.parsers import extract_text
 
@@ -22,7 +24,6 @@ async def ingest_document(
     url: str | None = Form(None),
     title: str | None = Form(None),
     tags: str | None = Form(None),
-    granularity: SM2Granularity = Form(SM2Granularity.per_document),
     db: Session = Depends(get_db),
 ):
     if not file and not url:
@@ -47,6 +48,16 @@ async def ingest_document(
     doc_title = title or (filename or url or "Untitled").split("/")[-1]
     tag_list = [t.strip() for t in tags.split(",")] if tags else []
 
+    # Save uploaded file to disk so it can be served back later
+    saved_file_path: str | None = None
+    if raw and filename:
+        settings = get_settings()
+        files_dir = Path(settings.sqlite_path).parent / "files" / doc_id
+        files_dir.mkdir(parents=True, exist_ok=True)
+        dest = files_dir / filename
+        dest.write_bytes(raw)
+        saved_file_path = str(dest)
+
     doc = Document(
         id=doc_id,
         source_path=url or filename or "",
@@ -54,6 +65,7 @@ async def ingest_document(
         title=doc_title,
         summary=summary,
         _chunk_count=len(chunks),
+        file_path=saved_file_path,
     )
     doc.tags = tag_list
     db.add(doc)
@@ -61,12 +73,10 @@ async def ingest_document(
 
     add_chunks(doc_id, chunks, embeddings)
 
-    if granularity == SM2Granularity.per_document:
-        db.add(SM2Record(document_id=doc_id, next_review_date=date.today()))
-    else:
-        chunk_ids = [f"{doc_id}_{i}" for i in range(len(chunks))]
-        for cid in chunk_ids:
-            db.add(SM2Record(document_id=doc_id, chunk_id=cid, next_review_date=date.today()))
+    # Always review per chunk
+    chunk_ids = [f"{doc_id}_{i}" for i in range(len(chunks))]
+    for cid in chunk_ids:
+        db.add(SM2Record(document_id=doc_id, chunk_id=cid, next_review_date=date.today()))
 
     existing = db.query(Document).filter(Document.id != doc_id).all()
     existing_meta = [{"id": d.id, "title": d.title, "summary": d.summary} for d in existing]

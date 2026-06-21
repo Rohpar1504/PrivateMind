@@ -23,6 +23,8 @@ class Document(Base):
     _tags: Mapped[str] = mapped_column("tags", Text, nullable=False, default="[]")
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
+    last_accessed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    file_path: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     sm2_records: Mapped[list["SM2Record"]] = relationship("SM2Record", back_populates="document", cascade="all, delete-orphan")
     outgoing_edges: Mapped[list["RelationshipEdge"]] = relationship("RelationshipEdge", foreign_keys="RelationshipEdge.source_doc_id", cascade="all, delete-orphan")

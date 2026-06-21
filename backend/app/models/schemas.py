@@ -43,6 +43,8 @@ class DocumentMeta(BaseModel):
     tags: list[str]
     created_at: datetime
     updated_at: datetime
+    last_accessed_at: datetime | None = None
+    file_path: str | None = None
 
 class DocumentUpdate(BaseModel):
     title: str | None = None

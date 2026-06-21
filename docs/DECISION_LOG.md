@@ -402,4 +402,48 @@
 
 ---
 
+### #030 — SM-2 granularity fixed to per-chunk; radio buttons removed
+- **Date:** 2026-06-21
+- **Status:** Decided (supersedes #013)
+- **Decision:** All ingested documents are reviewed at the chunk level. The per-document/per-chunk radio button is removed from the Add Document UI entirely. The `granularity` Form parameter is removed from `POST /ingest`.
+- **Context:** User decided all documents should be reviewed per chunk. Exposing the option added UI complexity without benefit.
+- **Rationale:** Simpler UI, consistent behavior across all documents.
+- **Trade-offs / Risks:** No per-document granularity option for short notes. Accepted as deliberate scope reduction.
+- **Spec Impact:** SPEC §6.1 (Add Document screen — radio buttons removed)
+
+---
+
+### #031 — Search has two modes: by chunk (semantic) and by document (keyword), toggled with a pill
+- **Date:** 2026-06-21
+- **Status:** Decided
+- **Decision:** Single search bar with a toggle pill ("By chunk" / "By document"). "By chunk" is the existing semantic search returning ranked chunk results with % match. "By document" is a new SQLite LIKE search on titles and tags, returning document cards with an "Open ↗" button.
+- **Context:** User wanted both search intents supported — "find me chunks about X" vs "find my document called Y."
+- **Rationale:** Pill toggle keeps the UI simple (one input, one action) while covering both use cases. Tabs would have separated them more than needed.
+- **Trade-offs / Risks:** Switching mode clears previous results. Acceptable UX.
+- **Spec Impact:** SPEC §6.2 (Search — updated to describe two modes and toggle)
+
+---
+
+### #032 — Uploaded files saved to disk at ingest; served back via GET /documents/{id}/file
+- **Date:** 2026-06-21
+- **Status:** Decided
+- **Decision:** When a file is uploaded, it is saved to `data/files/{doc_id}/{filename}`. A new endpoint `GET /documents/{id}/file` serves it back. Web pages redirect to the source URL instead.
+- **Context:** "Open in new tab" on search results requires the original file to be accessible. Without this, local files were unservable.
+- **Rationale:** Minimal storage footprint (files in existing data volume). Browser renders PDFs natively; TXT/MD shown as text; DOCX downloaded.
+- **Trade-offs / Risks:** Doubles storage for uploaded files (file on disk + extracted text in SQLite). Acceptable for a local app.
+- **Spec Impact:** SPEC §3 (data model — file_path field added to Document)
+
+---
+
+### #033 — Home page shows all documents as a card grid with four sort options
+- **Date:** 2026-06-21
+- **Status:** Decided
+- **Decision:** Home page includes a "Your documents" section below quick actions: a card grid of all ingested documents with title, summary snippet, tags, file type badge, and date. Sort options: Newest to Oldest, Oldest to Newest, Alphabetical (A→Z), Most Recently Viewed. `last_accessed_at` column added to Document table, updated whenever `GET /documents/{id}` is called.
+- **Context:** User wanted the home page to serve as a library view, not just a dashboard.
+- **Rationale:** Card grid is scannable. Sort options cover the most common browsing intents. `last_accessed_at` is the minimal tracking needed for "Most Recently Viewed."
+- **Trade-offs / Risks:** Sorts happen client-side (all docs already fetched for the stats count). Fine for a local app with hundreds of docs; would need server-side pagination at thousands.
+- **Spec Impact:** SPEC §6.4 (Home screen — document library section added)
+
+---
+
 _[Future decisions will be appended below this line]_

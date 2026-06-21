@@ -15,13 +15,36 @@ export async function searchDocs(q: string, topK = 6) {
   return res.json()
 }
 
+export async function searchDocumentsByTitle(q: string) {
+  const res = await fetch(`${BASE}/documents/search?q=${encodeURIComponent(q)}`)
+  if (!res.ok) throw new Error("Document search failed")
+  return res.json() as Promise<DocumentMeta[]>
+}
+
 export async function listDocuments() {
   const res = await fetch(`${BASE}/documents`)
   if (!res.ok) throw new Error("Failed to fetch documents")
-  return res.json()
+  return res.json() as Promise<DocumentMeta[]>
 }
 
 export async function deleteDocument(id: string) {
   const res = await fetch(`${BASE}/documents/${id}`, { method: "DELETE" })
   if (!res.ok) throw new Error("Delete failed")
+}
+
+export function getDocumentFileUrl(id: string) {
+  return `${BASE}/documents/${id}/file`
+}
+
+export interface DocumentMeta {
+  id: string
+  source_path: string
+  file_type: string
+  title: string
+  summary: string
+  tags: string[]
+  created_at: string
+  updated_at: string
+  last_accessed_at: string | null
+  file_path: string | null
 }
