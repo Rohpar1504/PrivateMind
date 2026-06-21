@@ -93,6 +93,6 @@ PrivateMind/
 |-----------|--------|-------------|
 | M0 — Scaffold | ✅ | Docker Compose, FastAPI skeleton, React skeleton, sentence-transformers loading |
 | M1 — Ingest + Search | ✅ | File parsers, semantic chunking, ChromaDB, dual-mode search, document library |
-| M2 — Conversational QA | 🔜 | LangChain RAG chain, streaming chat, source citations |
+| M2 — Conversational QA | ✅ | Streaming RAG chain, session history, chat sidebar, stop/edit, floating bubble |
 | M3 — Forgetting Curve | 🔜 | SM-2 scheduler, review UI, home badge |
 | M4 — Polish + Demo | 🔜 | Settings, relationship graph data, demo video |

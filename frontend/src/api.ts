@@ -36,6 +36,56 @@ export function getDocumentFileUrl(id: string) {
   return `${BASE}/documents/${id}/file`
 }
 
+export async function streamChat(
+  sessionId: string,
+  message: string,
+  onToken: (token: string) => void,
+  onSources: (sources: string[]) => void,
+  onDone: () => void,
+  onError: (err: string) => void,
+  signal?: AbortSignal,
+) {
+  try {
+    const res = await fetch(`${BASE}/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: sessionId, message }),
+      signal,
+    })
+    if (!res.ok || !res.body) {
+      onError('Chat request failed.')
+      return
+    }
+    const reader = res.body.getReader()
+    const decoder = new TextDecoder()
+    let buffer = ''
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buffer += decoder.decode(value, { stream: true })
+      const lines = buffer.split('\n')
+      buffer = lines.pop() ?? ''
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue
+        const payload = JSON.parse(line.slice(6))
+        if (payload.type === 'token') onToken(payload.content)
+        else if (payload.type === 'sources') onSources(payload.content)
+        else if (payload.type === 'done') onDone()
+      }
+    }
+  } catch (e) {
+    if (e instanceof DOMException && e.name === 'AbortError') {
+      onDone() // user stopped — treat as clean finish
+      return
+    }
+    onError(e instanceof Error ? e.message : 'Unknown error')
+  }
+}
+
+export async function clearChatSession(sessionId: string) {
+  await fetch(`${BASE}/chat/${sessionId}`, { method: 'DELETE' })
+}
+
 export interface DocumentMeta {
   id: string
   source_path: string

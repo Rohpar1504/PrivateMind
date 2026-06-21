@@ -1,20 +1,23 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from fastapi.responses import StreamingResponse
+from sqlalchemy.orm import Session
 
-from app.models.schemas import ChatRequest, ChatResponse
+from app import rag
+from app.database import get_db
+from app.models.schemas import ChatRequest
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
-# In-memory session store: session_id → list of {role, content} dicts
-_sessions: dict[str, list[dict]] = {}
 
-
-@router.post("", response_model=ChatResponse)
-async def chat(body: ChatRequest):
-    # TODO (M2): retrieve session history, run LangChain RAG chain, stream response
-    _sessions.setdefault(body.session_id, [])
-    return ChatResponse(answer="Chat not yet implemented — coming in M2", sources=[])
+@router.post("")
+async def chat(body: ChatRequest, db: Session = Depends(get_db)):
+    return StreamingResponse(
+        rag.stream_rag_response(body.session_id, body.message, db),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
 
 
 @router.delete("/{session_id}", status_code=204)
 async def clear_session(session_id: str):
-    _sessions.pop(session_id, None)
+    rag.clear_session(session_id)

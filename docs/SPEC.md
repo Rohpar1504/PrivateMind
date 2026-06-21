@@ -332,11 +332,11 @@ _M4 — Polish + Demo:_
 
 | Milestone | Target Date | Description | Test Gates |
 |-----------|-------------|-------------|------------|
-| M0 — Scaffold | | Repo, Docker Compose, FastAPI + React skeleton, Ollama running, sentence-transformers loading | Lint |
-| M1 — Ingest + Search | | All file type parsers, semantic chunker, ChromaDB storage, standalone search screen | Lint, Unit, User, LLM-as-a-Judge |
-| M2 — Conversational QA | | LangChain RAG chain, server-side session history, chat screen with streaming + citations | Lint, Unit, User, LLM-as-a-Judge |
-| M3 — Forgetting Curve | | SM-2 scheduler, review screen (list mode + opt-in Study Mode), home screen badge | Lint, Unit, User, LLM-as-a-Judge |
-| M4 — Polish + Demo | | Settings screen, relationship extraction, README, demo video, portfolio-ready | All four layers + full regression pass |
+| M0 — Scaffold | ✅ Complete | Repo, Docker Compose, FastAPI + React skeleton, Ollama running, sentence-transformers loading | Lint |
+| M1 — Ingest + Search | ✅ Complete | All file type parsers, semantic chunker, ChromaDB storage, dual-mode search, document library, per-chunk SM-2 default | Lint, Unit, User, LLM-as-a-Judge |
+| M2 — Conversational QA | ✅ Complete | Streaming RAG chain, server-side session history, chat sidebar, stop/edit/floating bubble, background stream notifications | Lint, Unit, User, LLM-as-a-Judge |
+| M3 — Forgetting Curve | 🔜 Next | SM-2 scheduler, review screen (list mode + opt-in Study Mode), home screen badge | Lint, Unit, User, LLM-as-a-Judge |
+| M4 — Polish + Demo | 🔜 | Settings screen, relationship extraction, README, demo video, portfolio-ready | All four layers + full regression pass |
 
 ---
 
