@@ -129,7 +129,7 @@ async def run_eval(milestone: str, api_url: str, ollama_url: str, ollama_model: 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run LLM-as-a-Judge eval for PrivateMind")
-    parser.add_argument("--milestone", default="M1", choices=["M1", "M2", "M3", "M4"])
+    parser.add_argument("--milestone", default="M1", choices=["M1", "M2", "M3", "M3.5", "M4"])
     parser.add_argument("--api-url", default="http://localhost:8000")
     parser.add_argument("--ollama-url", default="http://localhost:11434")
     parser.add_argument("--model", default="llama3")

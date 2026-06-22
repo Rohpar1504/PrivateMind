@@ -309,6 +309,18 @@ _M3 — Forgetting Curve:_
 - [ ] "Completed" tab shows reviewed items with next scheduled date
 - [ ] After marking all reviewed, badge on Home disappears
 
+_M3.5 — Onboarding & Modes:_
+- [ ] Fresh load (no `pm_mode` in localStorage) → Onboarding modal appears, covers full screen
+- [ ] Each of the three option cards is selectable; "Get started" button disabled until a mode is chosen
+- [ ] Educational mode: Review appears in nav; To-Do absent
+- [ ] Personal mode: Review and To-Do both absent from nav
+- [ ] Business mode: To-Do appears in nav; Review absent
+- [ ] Home page shows correct stat card and quick-action for the chosen mode
+- [ ] Home banner: Educational → review banner (if due); Business → To-Do overdue banner (if overdue)
+- [ ] To-Do page: add a task, check it off, delete it; due-date highlights (due today / overdue)
+- [ ] Settings → "Change mode" → Onboarding modal re-appears; picking a new mode takes effect immediately
+- [ ] Mode badge in sidebar footer shows current mode label
+
 _M4 — Polish + Demo:_
 - [ ] Settings screen: change Ollama model → chat uses new model
 - [ ] All four flows (ingest, search, chat, review) work end-to-end without errors
@@ -335,7 +347,8 @@ _M4 — Polish + Demo:_
 | M0 — Scaffold | ✅ Complete | Repo, Docker Compose, FastAPI + React skeleton, Ollama running, sentence-transformers loading | Lint |
 | M1 — Ingest + Search | ✅ Complete | All file type parsers, semantic chunker, ChromaDB storage, dual-mode search, document library, per-chunk SM-2 default | Lint, Unit, User, LLM-as-a-Judge |
 | M2 — Conversational QA | ✅ Complete | Streaming RAG chain, server-side session history, chat sidebar, stop/edit/floating bubble, background stream notifications | Lint, Unit, User, LLM-as-a-Judge |
-| M3 — Forgetting Curve | 🔜 Next | SM-2 scheduler, review screen (list mode + opt-in Study Mode), home screen badge | Lint, Unit, User, LLM-as-a-Judge |
+| M3 — Forgetting Curve | ✅ Complete | SM-2 scheduler, review screen (list mode + Study Mode), home screen badge | Lint, Unit, User |
+| M3.5 — Onboarding & Modes | ✅ Complete | First-load mode picker (Educational/Personal/Business), mode-aware nav, To-Do page, Settings mode switcher | Lint, Build, User |
 | M4 — Polish + Demo | 🔜 | Settings screen, relationship extraction, README, demo video, portfolio-ready | All four layers + full regression pass |
 
 ---

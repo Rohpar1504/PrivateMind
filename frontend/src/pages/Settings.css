@@ -54,3 +54,29 @@
   color: var(--text-muted);
   font-family: monospace;
 }
+
+.mode-pill {
+  display: inline-block;
+  padding: 4px 14px;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent-hover);
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mode-change-btn {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.mode-change-btn:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}

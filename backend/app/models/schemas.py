@@ -89,6 +89,22 @@ class SM2Record(BaseModel):
     next_review_date: date
 
 
+class ReviewCard(BaseModel):
+    sm2_id: UUID
+    document_id: UUID
+    document_title: str
+    chunk_id: str | None
+    chunk_text: str
+    interval_days: int
+    repetitions: int
+    next_review_date: date
+
+
+class ReviewStats(BaseModel):
+    due: int
+    reviewed_today: int
+
+
 class ReviewCompleteRequest(BaseModel):
     rating: RecallRating
 

@@ -97,5 +97,71 @@
       "mypy",
       "autocompletion"
     ]
+  },
+  {
+    "id": "m3-001",
+    "milestone": "M3",
+    "question": "What is the Ebbinghaus forgetting curve and how does it affect memory retention?",
+    "expected_doc": "spaced_repetition.txt",
+    "expected_answer_contains": [
+      "forgetting",
+      "memory",
+      "review"
+    ]
+  },
+  {
+    "id": "m3-002",
+    "milestone": "M3",
+    "question": "How does the SM-2 algorithm calculate the next review interval?",
+    "expected_doc": "spaced_repetition.txt",
+    "expected_answer_contains": [
+      "interval",
+      "easiness factor",
+      "repetition"
+    ]
+  },
+  {
+    "id": "m3-003",
+    "milestone": "M3",
+    "question": "What techniques help avoid overfitting in machine learning models?",
+    "expected_doc": "ml_basics.txt",
+    "expected_answer_contains": [
+      "regularization",
+      "training",
+      "generalize"
+    ]
+  },
+  {
+    "id": "m3.5-001",
+    "milestone": "M3.5",
+    "question": "Why is spaced repetition better than re-reading for long-term memory?",
+    "expected_doc": "spaced_repetition.txt",
+    "expected_answer_contains": [
+      "spaced",
+      "retention",
+      "intervals"
+    ]
+  },
+  {
+    "id": "m3.5-002",
+    "milestone": "M3.5",
+    "question": "What is the difference between supervised and unsupervised learning?",
+    "expected_doc": "ml_basics.txt",
+    "expected_answer_contains": [
+      "labeled",
+      "supervised",
+      "unsupervised"
+    ]
+  },
+  {
+    "id": "m3.5-003",
+    "milestone": "M3.5",
+    "question": "What are Python generators and how do they help with memory efficiency?",
+    "expected_doc": "python_tips.txt",
+    "expected_answer_contains": [
+      "yield",
+      "memory",
+      "lazy"
+    ]
   }
 ]

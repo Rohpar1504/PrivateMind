@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { DocumentMeta, getDocumentFileUrl, listDocuments } from '../api'
+import { DocumentMeta, getDocumentFileUrl, getReviewStats, listDocuments } from '../api'
+import type { AppMode } from '../hooks/useMode'
+import { getTodoDueCount } from './Todo'
 import './Home.css'
 
 type SortOption = 'newest' | 'oldest' | 'alpha' | 'recent'
@@ -30,14 +32,25 @@ function sortDocs(docs: DocumentMeta[], sort: SortOption): DocumentMeta[] {
   })
 }
 
-export default function Home() {
+interface Props {
+  mode: AppMode
+}
+
+export default function Home({ mode }: Props) {
   const [docs, setDocs] = useState<DocumentMeta[]>([])
   const [sort, setSort] = useState<SortOption>('newest')
-  const dueCount = 0 // TODO (M3): fetch from /review/due
+  const [dueCount, setDueCount] = useState(0)
+  const [reviewedToday, setReviewedToday] = useState(0)
+  const todoDueCount = getTodoDueCount()
 
   useEffect(() => {
     listDocuments().then(setDocs).catch(() => setDocs([]))
-  }, [])
+    if (mode === 'educational') {
+      getReviewStats()
+        .then(s => { setDueCount(s.due); setReviewedToday(s.reviewed_today) })
+        .catch(() => {})
+    }
+  }, [mode])
 
   const sorted = useMemo(() => sortDocs(docs, sort), [docs, sort])
 
@@ -56,9 +69,15 @@ export default function Home() {
         <p className="page-subtitle">Your local AI second brain — fully offline.</p>
       </div>
 
-      {dueCount > 0 && (
+      {mode === 'educational' && dueCount > 0 && (
         <Link to="/review" className="review-banner">
           {dueCount} note{dueCount !== 1 ? 's' : ''} due for review today →
+        </Link>
+      )}
+
+      {mode === 'business' && todoDueCount > 0 && (
+        <Link to="/todo" className="review-banner todo-banner">
+          {todoDueCount} task{todoDueCount !== 1 ? 's' : ''} due today or overdue →
         </Link>
       )}
 
@@ -67,14 +86,26 @@ export default function Home() {
           <span className="stat-value">{docs.length}</span>
           <span className="stat-label">Documents ingested</span>
         </div>
-        <div className="stat-card">
-          <span className="stat-value">—</span>
-          <span className="stat-label">Due for review</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-value">—</span>
-          <span className="stat-label">Reviews completed</span>
-        </div>
+
+        {mode === 'educational' && (
+          <>
+            <div className="stat-card">
+              <span className="stat-value">{dueCount}</span>
+              <span className="stat-label">Due for review</span>
+            </div>
+            <div className="stat-card">
+              <span className="stat-value">{reviewedToday}</span>
+              <span className="stat-label">Reviewed today</span>
+            </div>
+          </>
+        )}
+
+        {mode === 'business' && (
+          <div className="stat-card">
+            <span className="stat-value">{todoDueCount}</span>
+            <span className="stat-label">Tasks due today</span>
+          </div>
+        )}
       </div>
 
       <div className="quick-actions">
@@ -92,10 +123,18 @@ export default function Home() {
             <span className="action-icon">💬</span>
             <span>Start chat</span>
           </Link>
-          <Link to="/review" className="action-card">
-            <span className="action-icon">↻</span>
-            <span>Review queue</span>
-          </Link>
+          {mode === 'educational' && (
+            <Link to="/review" className="action-card">
+              <span className="action-icon">↻</span>
+              <span>Review queue</span>
+            </Link>
+          )}
+          {mode === 'business' && (
+            <Link to="/todo" className="action-card">
+              <span className="action-icon">✓</span>
+              <span>To-Do list</span>
+            </Link>
+          )}
         </div>
       </div>
 

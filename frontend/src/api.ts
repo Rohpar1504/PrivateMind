@@ -86,6 +86,50 @@ export async function clearChatSession(sessionId: string) {
   await fetch(`${BASE}/chat/${sessionId}`, { method: 'DELETE' })
 }
 
+export interface ReviewCard {
+  sm2_id: string
+  document_id: string
+  document_title: string
+  chunk_id: string | null
+  chunk_text: string
+  interval_days: number
+  repetitions: number
+  next_review_date: string
+}
+
+export interface ReviewStats {
+  due: number
+  reviewed_today: number
+}
+
+export async function getDueCards(): Promise<ReviewCard[]> {
+  const res = await fetch(`${BASE}/review/due`)
+  if (!res.ok) throw new Error('Failed to fetch due cards')
+  return res.json()
+}
+
+export async function getCompletedCards(): Promise<ReviewCard[]> {
+  const res = await fetch(`${BASE}/review/completed`)
+  if (!res.ok) throw new Error('Failed to fetch completed cards')
+  return res.json()
+}
+
+export async function getReviewStats(): Promise<ReviewStats> {
+  const res = await fetch(`${BASE}/review/stats`)
+  if (!res.ok) throw new Error('Failed to fetch review stats')
+  return res.json()
+}
+
+export async function submitRating(sm2Id: string, rating: 'easy' | 'hard'): Promise<ReviewCard> {
+  const res = await fetch(`${BASE}/review/${sm2Id}/complete`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ rating }),
+  })
+  if (!res.ok) throw new Error('Failed to submit rating')
+  return res.json()
+}
+
 export interface DocumentMeta {
   id: string
   source_path: string

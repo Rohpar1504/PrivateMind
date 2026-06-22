@@ -523,4 +523,81 @@
 
 ---
 
+### #041 — SM-2 ratings simplified to Easy (q=5) / Hard (q=2); ease floor 1.3
+- **Date:** 2026-06-21
+- **Status:** Decided
+- **Decision:** The standard SM-2 quality scale (0–5) is collapsed to two buttons: Easy (q=5) and Hard (q=2). Hard resets repetitions to 0 and interval to 1. Easy advances the schedule using the standard multiplier formula. Ease factor minimum is 1.3 as per the original SM-2 spec.
+- **Context:** A 6-point scale would overwhelm users in a daily review context. Two choices (remembered well / didn't remember) cover the meaningful outcomes.
+- **Rationale:** Simplicity. Anki itself uses a 4-button scale; 2 is the minimum viable version.
+- **Trade-offs / Risks:** Less scheduling precision than full 0–5. Acceptable for v1.
+- **Spec Impact:** SPEC §5 (SM-2 — rating scale)
+
+---
+
+### #042 — Chunk text fetched from ChromaDB at review time; not duplicated to SQLite
+- **Date:** 2026-06-21
+- **Status:** Decided
+- **Decision:** `GET /review/due` fetches chunk text from ChromaDB using the `chunk_id` stored on the SM2Record. If not found, falls back to the document summary from SQLite.
+- **Context:** Chunk text already lives in ChromaDB. Duplicating it to SQLite would waste space and introduce sync complexity.
+- **Rationale:** Single source of truth for chunk content. Fallback to summary ensures the card is always displayable even if ChromaDB is inconsistent.
+- **Trade-offs / Risks:** Review page requires ChromaDB to be running. This is always true for the app anyway.
+- **Spec Impact:** SPEC §3 (data model — review card data flow)
+
+---
+
+### #043 — Review has two modes: List (all cards visible) and Study (one at a time with progress bar)
+- **Date:** 2026-06-21
+- **Status:** Decided
+- **Decision:** List mode shows all due cards simultaneously with Easy/Hard buttons. Study mode shows one card at a time with a progress bar and counter. Mode is toggled by a checkbox, persisted in localStorage.
+- **Context:** List mode is faster for users who want to skim and rate quickly. Study mode is better for focused recall practice.
+- **Rationale:** Both modes serve real use cases. localStorage persistence means the preference survives refresh.
+- **Trade-offs / Risks:** None significant.
+- **Spec Impact:** SPEC §6.4 (Review screen)
+
+---
+
+### #044 — Mode stored in localStorage; no backend required for M3.5
+- **Date:** 2026-06-21
+- **Status:** Decided
+- **Decision:** The chosen use-case mode (`educational` / `personal` / `business`) is stored entirely in `localStorage` under the key `pm_mode`. No backend endpoint, no database column.
+- **Context:** Mode only affects which nav items and pages are rendered. It is a frontend UI preference, not data that needs to survive across devices or users.
+- **Rationale:** Simplest implementation. Zero backend changes. Mode can be switched via Settings without any server call.
+- **Trade-offs / Risks:** Mode doesn't persist across browsers or devices, which is acceptable for a local single-user app.
+- **Spec Impact:** SPEC §11 (Onboarding & Mode system)
+
+---
+
+### #045 — To-Do data stored in localStorage; no backend required
+- **Date:** 2026-06-21
+- **Status:** Decided
+- **Decision:** Business-mode To-Do items are stored in `localStorage` under `pm_todos`. No new backend routes, no new SQLite table.
+- **Context:** The To-Do checklist is a lightweight feature for Business mode. Adding backend persistence would require a new SQLAlchemy model, migration, router, and API surface for minimal gain in a local single-user app.
+- **Rationale:** LocalStorage is sufficient for a single-user, single-device app. Keeps the backend clean and focused on document intelligence.
+- **Trade-offs / Risks:** Data lost if localStorage is cleared. Acceptable risk for v1; backend persistence can be added in M4+ if needed.
+- **Spec Impact:** SPEC §6.5 (To-Do — Business mode)
+
+---
+
+### #046 — No push notifications for Business To-Do; use visual due-date highlighting and home banner instead
+- **Date:** 2026-06-21
+- **Status:** Decided
+- **Decision:** Business-mode To-Do "reminders" are implemented as visual overdue/due-today highlighting on the To-Do list, plus a warning banner on the Home page. No OS push notifications, no service worker.
+- **Context:** True OS-level reminders require a service worker (or native integration), which breaks the "fully offline, no background services" principle and significantly increases complexity.
+- **Rationale:** Visual cues on the home page are sufficient for awareness. Users check the app intentionally; they will see the banner. Keeps the app architecture simple.
+- **Trade-offs / Risks:** No background alerts if the app is closed. Acceptable for v1; push reminders → v2 if demanded.
+- **Spec Impact:** SPEC §6.5 (To-Do — reminders approach)
+
+---
+
+### #047 — Mode-aware nav computed at runtime from mode value; no separate config file
+- **Date:** 2026-06-21
+- **Status:** Decided
+- **Decision:** `getNavItems(mode)` is a pure function in `App.tsx` that returns the correct nav array based on the current mode. There is no separate nav config file or context provider.
+- **Context:** The nav differs only in whether Review or To-Do appears. Encoding this as a small function is simpler than a context, a config file, or feature flags.
+- **Rationale:** YAGNI — three modes with two variations don't justify abstraction overhead.
+- **Trade-offs / Risks:** Adding a fourth mode in the future requires editing `getNavItems` and `App.tsx`. Low risk at this scale.
+- **Spec Impact:** SPEC §8 (UI / UX — nav structure)
+
+---
+
 _[Future decisions will be appended below this line]_

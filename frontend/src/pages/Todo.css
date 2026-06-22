@@ -1,0 +1,250 @@
+.todo-due-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: color-mix(in srgb, var(--warning, #f59e0b) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--warning, #f59e0b) 40%, transparent);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--warning, #f59e0b);
+  margin-bottom: 20px;
+}
+
+/* ── Add form ── */
+.todo-add-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  max-width: 680px;
+}
+
+.todo-input {
+  flex: 1;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.todo-input:focus {
+  border-color: var(--accent);
+}
+
+.todo-date-input {
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+  min-width: 140px;
+  color-scheme: dark;
+}
+
+.todo-date-input:focus {
+  border-color: var(--accent);
+}
+
+.todo-add-btn {
+  padding: 10px 22px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.todo-add-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.todo-add-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Filter bar ── */
+.todo-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
+}
+
+.todo-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
+}
+
+.todo-filter-btn:hover { color: var(--text); }
+
+.todo-filter-btn.active {
+  color: var(--accent-hover);
+  border-bottom-color: var(--accent);
+}
+
+.todo-filter-count {
+  font-size: 11px;
+  background: var(--border);
+  color: var(--text-muted);
+  border-radius: 99px;
+  padding: 1px 7px;
+}
+
+.todo-clear-done {
+  margin-left: auto;
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.todo-clear-done:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+/* ── Todo list ── */
+.todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 680px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  transition: border-color 0.15s, opacity 0.15s;
+}
+
+.todo-item.done {
+  opacity: 0.55;
+}
+
+.todo-item.due-today {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+}
+
+.todo-item.overdue {
+  border-color: color-mix(in srgb, var(--danger) 50%, var(--border));
+  background: color-mix(in srgb, var(--danger) 5%, var(--surface));
+}
+
+.todo-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.todo-item.done .todo-checkbox {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.todo-checkbox:hover {
+  border-color: var(--accent);
+}
+
+.todo-item-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.todo-item-text {
+  font-size: 13.5px;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.todo-item.done .todo-item-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.todo-due-label {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.todo-item.due-today .todo-due-label {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.todo-item.overdue .todo-due-label {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.todo-remove-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.todo-item:hover .todo-remove-btn {
+  opacity: 1;
+}
+
+.todo-remove-btn:hover {
+  color: var(--danger);
+}

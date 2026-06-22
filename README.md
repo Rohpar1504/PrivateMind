@@ -38,7 +38,9 @@ To enable GPU passthrough for Ollama, install [nvidia-container-toolkit](https:/
 - **Semantic search** — search by meaning across all your document chunks, with % match scores
 - **Document search** — find documents by title or tag, open originals in one click
 - **Conversational QA** — ask questions and get answers grounded in your documents (M2)
-- **Spaced repetition** — SM-2 scheduler resurfaces content you are about to forget (M3)
+- **Spaced repetition** — SM-2 scheduler resurfaces content you are about to forget (M3, Educational mode)
+- **To-Do checklist** — task list with due dates and overdue highlighting (M3.5, Business mode)
+- **Use-case onboarding** — first-load mode picker (Educational / Personal / Business) tailors the nav and features (M3.5)
 - **Fully offline** — no data leaves your machine; all models run locally via Ollama and sentence-transformers
 
 ## Development
@@ -51,7 +53,8 @@ cd backend && ruff check .
 cd backend && pytest
 
 # LLM-as-a-Judge eval (requires docker compose up first)
-cd backend && python -m evals.runner --milestone M1
+# --milestone accepts: M1, M2, M3, M3.5, M4
+cd backend && python -m evals.runner --milestone M3.5
 
 # Frontend lint
 cd frontend && npm run lint
@@ -80,7 +83,7 @@ PrivateMind/
 │   └── tests/
 ├── frontend/                 # React + Vite + TypeScript
 │   └── src/
-│       └── pages/            # Home, AddDocument, Search, Chat, Review, Settings
+│       └── pages/            # Home, AddDocument, Search, Chat, Review, Todo, Settings, Onboarding
 ├── docs/
 │   ├── SPEC.md
 │   └── DECISION_LOG.md
@@ -94,5 +97,6 @@ PrivateMind/
 | M0 — Scaffold | ✅ | Docker Compose, FastAPI skeleton, React skeleton, sentence-transformers loading |
 | M1 — Ingest + Search | ✅ | File parsers, semantic chunking, ChromaDB, dual-mode search, document library |
 | M2 — Conversational QA | ✅ | Streaming RAG chain, session history, chat sidebar, stop/edit, floating bubble |
-| M3 — Forgetting Curve | 🔜 | SM-2 scheduler, review UI, home badge |
+| M3 — Forgetting Curve | ✅ | SM-2 scheduler, review UI (list + study mode), home badge |
+| M3.5 — Onboarding & Modes | ✅ | First-load mode picker, mode-aware nav, To-Do page (Business), Settings mode switcher |
 | M4 — Polish + Demo | 🔜 | Settings, relationship graph data, demo video |

@@ -3,14 +3,17 @@ import { NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-d
 import { v4 as uuidv4 } from 'uuid'
 import FloatingChat from './components/FloatingChat'
 import { useChatSessions } from './hooks/useChatSessions'
+import { type AppMode, clearMode, getMode } from './hooks/useMode'
 import { clearChatSession, streamChat } from './api'
 import type { Message } from './types/chat'
 import AddDocument from './pages/AddDocument'
 import Chat from './pages/Chat'
 import Home from './pages/Home'
+import Onboarding from './pages/Onboarding'
 import Review from './pages/Review'
 import Search from './pages/Search'
 import Settings from './pages/Settings'
+import Todo from './pages/Todo'
 import './App.css'
 
 interface Notification {
@@ -19,29 +22,38 @@ interface Notification {
   title: string
 }
 
-const NAV_ITEMS = [
-  { to: '/', label: 'Home', end: true },
-  { to: '/add', label: 'Add Document' },
-  { to: '/search', label: 'Search' },
-  { to: '/chat', label: 'Chat' },
-  { to: '/review', label: 'Review' },
-  { to: '/settings', label: 'Settings' },
-]
+interface NavItem {
+  to: string
+  label: string
+  end?: boolean
+}
+
+function getNavItems(mode: AppMode): NavItem[] {
+  const base: NavItem[] = [
+    { to: '/', label: 'Home', end: true },
+    { to: '/add', label: 'Add Document' },
+    { to: '/search', label: 'Search' },
+    { to: '/chat', label: 'Chat' },
+  ]
+  if (mode === 'educational') base.push({ to: '/review', label: 'Review' })
+  if (mode === 'business') base.push({ to: '/todo', label: 'To-Do' })
+  base.push({ to: '/settings', label: 'Settings' })
+  return base
+}
 
 export default function App() {
   const location = useLocation()
   const navigate = useNavigate()
+
+  const [mode, setModeState] = useState<AppMode | null>(() => getMode())
+
   const { sessions, activeSession, activeId, newChat, switchSession, saveMessages } =
     useChatSessions()
 
-  // Live messages while streaming — keyed by sessionId
   const [streamingData, setStreamingData] = useState<Map<string, Message[]>>(new Map())
-  // Active abort controllers — keyed by sessionId
   const [activeStreams, setActiveStreams] = useState<Map<string, AbortController>>(new Map())
-  // Toast notifications for background stream completions
   const [notifications, setNotifications] = useState<Notification[]>([])
 
-  // Refs so async callbacks always see current values without stale closures
   const activeIdRef = useRef(activeId)
   useEffect(() => { activeIdRef.current = activeId }, [activeId])
   const sessionsRef = useRef(sessions)
@@ -62,7 +74,6 @@ export default function App() {
       const controller = new AbortController()
       setActiveStreams(prev => new Map(prev).set(sessionId, controller))
 
-      // Accumulate tokens in a local variable — avoids stale state in callbacks
       let current = withAssistant
 
       await streamChat(
@@ -92,7 +103,6 @@ export default function App() {
           setStreamingData(prev => { const n = new Map(prev); n.delete(sessionId); return n })
           setActiveStreams(prev => { const n = new Map(prev); n.delete(sessionId); return n })
 
-          // Notify if the stream finished in the background
           if (sessionId !== activeIdRef.current) {
             const session = sessionsRef.current.find(s => s.id === sessionId)
             const title = session?.title ?? 'Chat'
@@ -130,14 +140,30 @@ export default function App() {
     setNotifications(prev => prev.filter(n => n.id !== notif.id))
   }
 
+  const handleOnboardingDone = (chosen: AppMode) => {
+    setModeState(chosen)
+  }
+
+  const handleResetMode = () => {
+    clearMode()
+    setModeState(null)
+  }
+
   const onChatPage = location.pathname === '/chat'
+
+  // Show onboarding until mode is chosen
+  if (!mode) {
+    return <Onboarding onDone={handleOnboardingDone} />
+  }
+
+  const navItems = getNavItems(mode)
 
   return (
     <div className="app-shell">
       <nav className="sidebar">
         <div className="sidebar-logo">PrivateMind</div>
         <ul className="sidebar-nav">
-          {NAV_ITEMS.map(({ to, label, end }) => (
+          {navItems.map(({ to, label, end }) => (
             <li key={to}>
               <NavLink
                 to={to}
@@ -152,11 +178,14 @@ export default function App() {
             </li>
           ))}
         </ul>
+        <div className="sidebar-mode-badge">
+          {mode.charAt(0).toUpperCase() + mode.slice(1)} mode
+        </div>
       </nav>
 
       <main className="main-content">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home mode={mode} />} />
           <Route path="/add" element={<AddDocument />} />
           <Route path="/search" element={<Search />} />
           <Route
@@ -176,8 +205,9 @@ export default function App() {
               />
             }
           />
-          <Route path="/review" element={<Review />} />
-          <Route path="/settings" element={<Settings />} />
+          {mode === 'educational' && <Route path="/review" element={<Review />} />}
+          {mode === 'business' && <Route path="/todo" element={<Todo />} />}
+          <Route path="/settings" element={<Settings mode={mode} onResetMode={handleResetMode} />} />
         </Routes>
       </main>
 
@@ -193,7 +223,6 @@ export default function App() {
         />
       )}
 
-      {/* Toast notifications for background completions */}
       <div className="notif-stack">
         {notifications.map(notif => (
           <button
